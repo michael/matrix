@@ -15,16 +15,6 @@
     <script type="text/javascript" src="javascripts/matrix_plot.js"></script>
     <script type="text/javascript" src="javascripts/application.js"></script>
     
-    <script type="text/x-ejs-template" name="browser_tab">
-      <div class="cursor"><span></span></div>
-      <div class="icon browse"></div>
-      <div class="tab-label">Browser</div>
-      <form id="search_form"><input type="text" id="search" name="search" value="<%= query_descr %>" autocomplete="off"/></form>
-      <div class="count"><%= projects.length > 0 ? projects.length : ''%></div>
-      <br class="clear"/>
-      <div class="results"></div>
-    </script>
-    
     <script type="text/x-ejs-template" name="project">
       <div id="facets"></div>
       <div id="canvas"></div>
