@@ -1,0 +1,106 @@
+html {
+  color: green;
+}
+
+body {
+  background: #eee;
+}
+
+#project h3 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+/* Header 
+   --------------------------------------- */
+
+#header {
+  height: 25px;
+  background: #555;
+}
+
+
+/* Project 
+   --------------------------------------- */
+
+#project {}
+
+/* Facets */
+
+#facets {
+  background: #eee;
+  position: fixed;
+  overflow: auto;
+  left: 0px;
+  top: 30px;
+  bottom: 0px;
+  width: 300px;
+}
+
+#facets .filter .values {
+  max-height: 200px;
+  overflow: auto;
+}
+
+#facets a.add-value {
+  color: #888;
+}
+
+#facets a.remove-value {
+  background: #444;
+  color: #fff;
+}
+
+/* Matrix Plot 
+   --------------------------------------- */
+
+#canvas {
+  position: fixed;
+  left: 320px;
+  right: 0px;
+  top: 50px;
+  bottom: 0px;
+}
+
+
+#canvas svg {
+
+}
+
+
+g.cell {
+  opacity: .6;
+}
+
+.cell rect {
+  fill: steelblue;
+/*  stroke-width: 0.01;
+  stroke: #fff;*/
+/*  fill-opacity: .8;*/
+}
+
+
+rect.cell.highlighted {
+  fill: green;
+}
+
+rect.cell:hover {
+  fill-opacity: 1.0;
+}
+
+image.cell {
+  fill: steelblue;
+  fill-opacity: .8;
+  stroke: #444;
+  stroke-width: 3;
+}
+
+
+image.cell.highlighted {
+  
+}
+
+image.cell:hover {
+  fill-opacity: 1.0;
+}

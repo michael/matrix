@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Partition - Icicle</title>
+    <script type="text/javascript" src="lib/jquery.js"></script>
+    <script type="text/javascript" src="lib/d3.js"></script>
+    <script type="text/javascript" src="lib/d3.layout.js"></script>
+    <script type="text/javascript" src="lib/underscore.js"></script>
+    <script type="text/javascript" src="lib/data.js"></script>
+    <script type="text/javascript" src="lib/backbone.js"></script>
+    <script type="text/javascript" src="javascripts/helpers.js"></script>
+    
+    <script type="text/javascript" src="fixtures/countries.js"></script>
+    <script type="text/javascript" src="javascripts/matrix_plot.js"></script>
+    <script type="text/javascript" src="javascripts/application.js"></script>
+    
+    <script type="text/x-ejs-template" name="browser_tab">
+      <div class="cursor"><span></span></div>
+      <div class="icon browse"></div>
+      <div class="tab-label">Browser</div>
+      <form id="search_form"><input type="text" id="search" name="search" value="<%= query_descr %>" autocomplete="off"/></form>
+      <div class="count"><%= projects.length > 0 ? projects.length : ''%></div>
+      <br class="clear"/>
+      <div class="results"></div>
+    </script>
+    
+    <script type="text/x-ejs-template" name="project">
+      <div id="facets"></div>
+      <div id="canvas"></div>
+    </script>
+    
+    <script type="text/x-ejs-template" name="facets">
+      <h1>Filter criteria</h1>
+      
+      <% filters.each(function(f, key) { %>
+        <div class="filter">
+          <div><h3><%= f.property.name %></h3></div>
+          <div class="values">
+            <% f.property.all('values').each(function(value, key) { %>
+              <% color = f.selectedValues.get(key); %>
+              <% if (color) { %>
+                <a class="remove-value" style="background: <%= color %>;" href="#" property="<%= f.property.key %>" val="<%= value.val %>"><%= value.val %></a>
+              <% } else { %>
+                <a class="add-value" href="#" property="<%= f.property.key %>" val="<%= value.val %>"><%= value.val %></a>
+              <% } %>
+            <% }); %>
+          </div>
+        </div>
+      <% }); %>
+    </script>
+    
+    <script type="text/javascript">
+    
+      $(function() {
+        var app = new Application();
+        app.render();
+      });
+    </script>
+    
+    <link rel="stylesheet" type="text/css" media="all" href="stylesheets/reset.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="stylesheets/style.css"/>
+  </head>
+  <body>
+    <div id="header"></div>
+    <div id="project">
+
+    </div>
+  </body>
+</html>
