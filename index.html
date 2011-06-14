@@ -30,9 +30,9 @@
             <% f.property.all('values').each(function(value, key) { %>
               <% color = f.selectedValues.get(key); %>
               <% if (color) { %>
-                <a class="remove-value" style="background: <%= color %>;" href="#" property="<%= f.property.key %>" val="<%= value.val %>"><%= value.val %></a>
+                <a class="remove-value" style="background: <%= color %>;" href="#" property="<%= f.property.key %>" val="<%= value.val %>"><%= value.val %> (<%= value.referencedObjects.length %>)</a>
               <% } else { %>
-                <a class="add-value" href="#" property="<%= f.property.key %>" val="<%= value.val %>"><%= value.val %></a>
+                <a class="add-value" href="#" property="<%= f.property.key %>" val="<%= value.val %>"><%= value.val %> (<%= value.referencedObjects.length %>)</a>
               <% } %>
             <% }); %>
           </div>

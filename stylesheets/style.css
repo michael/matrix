@@ -70,21 +70,25 @@ body {
 
 
 g.cell {
-  opacity: .6;
+  opacity: .7;
+}
+
+g.cell:hover {
+  opacity: 1;
 }
 
 .cell rect {
-  fill: steelblue;
+/*  fill: black;*/
 /*  stroke-width: 0.01;
   stroke: #fff;*/
 /*  fill-opacity: .8;*/
 }
 
 
-rect.cell.highlighted {
+/*rect.cell.highlighted {
   fill: green;
 }
-
+*/
 rect.cell:hover {
   fill-opacity: 1.0;
 }

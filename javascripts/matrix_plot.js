@@ -1,5 +1,5 @@
-var w = 960,
-    h = 500;
+// var w = 960,
+//     h = 500;
 
 // Matrix Layout
 // ------------
@@ -38,17 +38,20 @@ var Matrix = function(filters) {
     
     // Precalculate matchedValues
     data.forEach(function(d, i) {
-      var matches = 0;
+      var matches = [];
       filters.each(function(f) {
         f.selectedValues.each(function(val, key) {
-          if (d.all(f.property.key).get(key)) matches += 1;
-          totalMatches ++;
+          if (d.all(f.property.key).get(key)) {
+            matches.push(val);
+          }
+          totalMatches += 1;
         });
       });
       
-      minMatches = Math.min(minMatches, matches);
-      maxMatches = Math.max(maxMatches, matches);
+      minMatches = Math.min(minMatches, matches.length);
+      maxMatches = Math.max(maxMatches, matches.length);
       d.matches = matches;
+      
     });
     
     var weight = d3.scale.linear().domain([minMatches,maxMatches]).range([0.4,0.9])
@@ -58,7 +61,8 @@ var Matrix = function(filters) {
       d.y = Math.floor(i / cols)*size;
       d.dx = size;
       d.dy = size;
-      d.weight = (minMatches > 0 && maxMatches>minMatches) ? weight(d.matches) : 0.9;
+      d.weight = (minMatches > 0 && maxMatches>minMatches) ? weight(d.matches.length) : 0.9;
+      d.maxMatches = maxMatches;
     });
     return data;
   }
@@ -81,17 +85,16 @@ var MatrixPlot = function(el, options) {
   var vis, matrix, cells, collection;
   var selectedValues;
   var initialized = false;
+  var width = 800, height = 600;
 
   function init() {
     vis = d3.select("#canvas")
       .append("svg:svg")
-        .attr("width", w)
-        .attr("height", h);
-
 
     initialized = true;
   }
-
+  
+  // Update cell position and scale
   function cell() {
     this
       .attr("transform", function(d) {
@@ -110,58 +113,80 @@ var MatrixPlot = function(el, options) {
     filters = options.filters;
     if (!initialized) init();
     
-    matrix = Matrix(filters)
-      .size(700, 500);
+    width = $('#canvas').width();
+    height = $('#canvas').height();
     
-    cells = vis.data([collection.items().values()]).selectAll("g")
-      .data(matrix);
-
+    matrix = Matrix(filters)
+      .size(width, height);
+    
+    cells = vis.data([collection.items().values()]).selectAll("g.cell")
+      .data(matrix, function(d) { return d._id; });
+      
     // Transition of new (arriving cells)
     var enteringCells = cells.enter().append("svg:g")
         .attr("class", "cell")
-        .attr("x", function(d) { return 0; })
-        .attr("y", function(d) { return 0; /*Math.round(Math.random()*h); */ })
-        .attr("transform", function() { return "translate("+Math.round(Math.random()*w)+","+Math.round(Math.random()*h)+") scale(1,1)";})
+        .attr("transform", function() { return "translate("+Math.round(Math.random()*width)+","+Math.round(Math.random()*height)+") scale(1,1)";})
     
-    
-    enteringCells.append("svg:image")
-      .attr("x", function(d) { return 0.5-d.weight/2; })
-      .attr("y", function(d) { return 0.5-d.weight/2; })
-      .attr("width", function(d) { return d.weight; })
-      .attr("height", function(d) { return d.weight; })
-      .attr("xlink:href", "http://a3.twimg.com/profile_images/53366429/smoofles.png")
-      
-    // Experimental
-    // enteringCells.append("svg:rect")
-    //   .attr("x", 0.95)
-    //   .attr("y", 0.8)
-    //   .attr("width", 0.1)
-    //   .attr("height", 0.1)
-    
+    // Add image and matches to cell
+    enteringCells.append("svg:g")
+      .attr("class", "image")
+      .attr("transform", function(d) { return "translate("+(0.5-d.weight/2)+","+(0.5-d.weight/2)+") scale("+d.weight+","+d.weight+")"; })
+      .append("svg:image")
+      // .attr("x", function(d) { return 0.5-d.weight/2; })
+      // .attr("y", function(d) { return 0.5-d.weight/2; })
+      .attr("width", function(d) { return 1; /*d.weight;*/ })
+      .attr("height", function(d) { return 1; /*d.weight;*/ })
+      .attr("xlink:href", function(d)  {
+        return d.get('image') || "images/david.png"
+      })
+        
     enteringCells.transition()
         // .delay(function(d, i) { return i * 20; })
-        .duration(800)
+        .duration(1500)
         .call(cell);
-
   
     // Transition of existing cells
     var existingCells = cells.transition()
       // .delay(function(d, i) { return i * 20; })
-      .duration(800)
+      .duration(1500)
       .call(cell);
     
     
     // TODO: select and update content (rect+image appropriately)
-    var rects = cells.select('image')
+    var rects = cells.select('g.image')
       // .data(matrix)
       .transition()
-      .duration(800)
-      .attr("x", function(d) { return 0.5-d.weight/2; })
-      .attr("y", function(d) { return 0.5-d.weight/2; })
-      // .attr("rx", function(d) { return 5 / ((d.dx-5)); })
-      // .attr("ry", function(d) { return 5 / ((d.dy-5)); })
-      .attr("width", function(d) { return d.weight; })
-      .attr("height", function(d) { return d.weight; })
+      .duration(1500)
+        .attr("transform", function(d) { return "translate("+(0.5-d.weight/2)+","+(0.5-d.weight/2)+") scale("+d.weight+","+d.weight+")"; })
+    
+    // Update matches
+
+    function match(sel) {
+      sel
+        .data(function(d, i) { return d.matches; })
+        .enter()
+        .append('svg:rect')
+        .attr('class', 'match')
+        .attr("x", function(d, i) { return 0.2*i; /* return 0.5-d.weight/2;*/ })
+        .attr("y", function(d, i) { return 0; })
+        .attr("fill", function(d) { return d; })
+        .attr("stroke-width", 0.01)
+        .attr("stroke", '#fff')
+        .attr("width", function(d, i) { return 0.16; })
+        .attr("height", function(d, i) { return 0.16; })
+    }
+    
+    // Remove all matches
+    cells.selectAll('g.image').selectAll('rect').remove();
+    
+    
+    // Build matches
+    cells.selectAll('g.image').selectAll('rect')
+      .call(match);
+    
+    // Build matches
+    enteringCells.selectAll('g.image').selectAll('rect')
+        .call(match);
 
     // Exit transition
     cells.exit().transition()
