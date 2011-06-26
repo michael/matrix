@@ -132,10 +132,9 @@ var MatrixPlot = function(el, options) {
       .attr("class", "image")
       .attr("transform", function(d) { return "translate("+(0.5-d.weight/2)+","+(0.5-d.weight/2)+") scale("+d.weight+","+d.weight+")"; })
       .append("svg:image")
-      // .attr("x", function(d) { return 0.5-d.weight/2; })
-      // .attr("y", function(d) { return 0.5-d.weight/2; })
-      .attr("width", function(d) { return 1; /*d.weight;*/ })
-      .attr("height", function(d) { return 1; /*d.weight;*/ })
+      .attr("width", function(d) { return 1; })
+      .attr("height", function(d) { return 1; })
+      .attr("image-rendering", "optimizeSpeed")
       .attr("xlink:href", function(d)  {
         return d.get('image') || "images/david.png"
       })
@@ -150,7 +149,6 @@ var MatrixPlot = function(el, options) {
       // .delay(function(d, i) { return i * 20; })
       .duration(1500)
       .call(cell);
-    
     
     // TODO: select and update content (rect+image appropriately)
     var rects = cells.select('g.image')
@@ -167,9 +165,10 @@ var MatrixPlot = function(el, options) {
         .enter()
         .append('svg:rect')
         .attr('class', 'match')
-        .attr("x", function(d, i) { return 0.2*i; /* return 0.5-d.weight/2;*/ })
+        .attr("x", function(d, i) { return 0.2*i; })
         .attr("y", function(d, i) { return 0; })
         .attr("fill", function(d) { return d; })
+        .attr("image-rendering", "optimizeSpeed")
         .attr("stroke-width", 0.01)
         .attr("stroke", '#fff')
         .attr("width", function(d, i) { return 0.16; })
